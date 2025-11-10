@@ -209,6 +209,10 @@
         font-weight: 400;
     }
 
+    .bg-primary {
+        background-color: #EE2B69 ;
+    }
+
     /* profile */
     .profile_container {
         width: 100%;
