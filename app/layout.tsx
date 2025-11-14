@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import localFont from "next/font/local";
 import 'easymde/dist/easymde.min.css'
+import { Toaster } from "@/components/ui/toaster";
 
 
 const workSans = localFont({
@@ -65,6 +66,7 @@ export default function RootLayout({
         className={workSans.variable}
       >
         {children}
+        <Toaster />
       </body>
     </html>
   );
