@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "Sentry": {
+      "url": "https://mcp.sentry.dev/mcp/atharva-07/javascript-nextjs",
+      "type": "http"
+    }
+  }
+}
