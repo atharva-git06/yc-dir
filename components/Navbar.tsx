@@ -3,13 +3,18 @@ import Image from "next/image";
 import { auth, signOut, signIn } from "@/auth";
 import { BadgePlus, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import * as Sentry from "@sentry/nextjs";
+import { Button } from "./ui/button";
 
 const Navbar = async () => {
   const session = await auth();
+ 
+
 
   return (
     <header className="px-5 py-3 bg-white shadow-sm font-work-sans">
       <nav className="flex justify-between items-center">
+      
         <Link href="/">
           <Image src="/logo.png" alt="logo" width={144} height={30} />
         </Link>
@@ -55,11 +60,13 @@ const Navbar = async () => {
             >
               <button type="submit">Login</button>
             </form>
+            
           )}
         </div>
       </nav>
     </header>
   );
 };
+
 
 export default Navbar;

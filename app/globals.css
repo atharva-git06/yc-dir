@@ -720,3 +720,29 @@
     @apply bg-background text-foreground;
     }
 }
+
+/* Adjust Sentry feedback button position */
+#sentry-feedback {
+    bottom: 80px !important; /* Move up to avoid conflicts */
+    /* OR */
+    left: 20px !important; /* Move to left side */
+    right: auto !important;
+  }
+  
+  /* Make it smaller if needed */
+  #sentry-feedback button {
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+  }
+  
+  /* Hide on mobile if needed */
+  @media (max-width: 768px) {
+    #sentry-feedback {
+      display: none;
+    }
+  }
+
+  [data-sentry-feedback] {
+    bottom: 100px !important; /* Move it up */
+    z-index: 40 !important;
+  }

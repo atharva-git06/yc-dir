@@ -12,6 +12,9 @@ Sentry.init({
     Sentry.feedbackIntegration({
       // Additional SDK configuration goes in here, for example:
       colorScheme: "system",
+      //showBranding: false,
+      autoInject: false,
+
     }),
     Sentry.replayIntegration(),
   ],
