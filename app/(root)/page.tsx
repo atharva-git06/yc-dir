@@ -1,7 +1,8 @@
 import { auth } from "@/auth";
 import SearchForm from "@/components/SearchForm";
 import StartupCard, {StartupTypeCard} from "@/components/StartupCard";
-import { sanityFetch, SanityLive } from "@/sanity/lib/live";
+import { clientFresh } from "@/sanity/lib/client";
+import { SanityLive } from "@/sanity/lib/live";
 import { STARTUPS_QUERY } from "@/sanity/lib/queries";
 
 export default async function Home({searchParams} : {
@@ -14,7 +15,8 @@ export default async function Home({searchParams} : {
   console.log(` this is session id: ${session?.id}`);
 
 
-  const { data: posts } = await sanityFetch({ query: STARTUPS_QUERY, params });
+  // useCdn: false so when page re-renders after revalidatePath (new startup created), we get fresh list from API
+  const posts = await clientFresh.fetch(STARTUPS_QUERY, params);
 
 
     return(

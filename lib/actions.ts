@@ -29,8 +29,22 @@ try {
     }
 
     const result = await writeClient.create({_type:"startup",...startup});
-    // Invalidate homepage cache so "All Startups" shows the new pitch on next load
+    // Invalidate homepage cache on this server (localhost or Vercel)
     revalidatePath("/");
+    // Also trigger revalidation on the live site so cache clears when creating from localhost
+    const secret = process.env.REVALIDATION_SECRET;
+    const origin = process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : process.env.REVALIDATE_ORIGIN;
+    if (secret && origin) {
+      try {
+        await fetch(
+          `${origin}/api/revalidate?secret=${encodeURIComponent(secret)}&path=/`
+        );
+      } catch {
+        // ignore network errors; revalidatePath already ran for current env
+      }
+    }
     return parseServerActionResponse({
         ...result,
         error: '',
