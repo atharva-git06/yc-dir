@@ -1,7 +1,7 @@
 "use server"
 
 import { auth } from "@/auth"
-import { error } from "console";
+import { revalidatePath } from "next/cache"
 import { parseServerActionResponse } from "./utils";
 import slugify from 'slugify'
 import { writeClient } from "@/sanity/lib/write-client";
@@ -29,6 +29,8 @@ try {
     }
 
     const result = await writeClient.create({_type:"startup",...startup});
+    // Invalidate homepage cache so "All Startups" shows the new pitch on next load
+    revalidatePath("/");
     return parseServerActionResponse({
         ...result,
         error: '',
