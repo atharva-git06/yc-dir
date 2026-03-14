@@ -29,9 +29,9 @@ try {
     }
 
     const result = await writeClient.create({_type:"startup",...startup});
-    // Invalidate homepage cache on this server (localhost or Vercel)
+    // Invalidate homepage and current user's profile so new startup appears
     revalidatePath("/");
-    // Also trigger revalidation on the live site so cache clears when creating from localhost
+    if (session?.id) revalidatePath(`/user/${session.id}`);
     const secret = process.env.REVALIDATION_SECRET;
     const origin = process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
@@ -41,6 +41,11 @@ try {
         await fetch(
           `${origin}/api/revalidate?secret=${encodeURIComponent(secret)}&path=/`
         );
+        if (session?.id) {
+          await fetch(
+            `${origin}/api/revalidate?secret=${encodeURIComponent(secret)}&path=${encodeURIComponent(`/user/${session.id}`)}`
+          );
+        }
       } catch {
         // ignore network errors; revalidatePath already ran for current env
       }
