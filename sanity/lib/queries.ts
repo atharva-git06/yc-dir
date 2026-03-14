@@ -76,6 +76,22 @@ export const STARTUPS_BY_AUTHOR_QUERY =
   image,
 }`);
 
+/** Match by author's GitHub id so "Your Startups" works on both localhost and live (same person, same startups) */
+export const STARTUPS_BY_AUTHOR_GITHUB_ID_QUERY =
+  defineQuery(`*[_type == "startup" && author->id == $githubId] | order(_createdAt desc) {
+  _id, 
+  title, 
+  slug,
+  _createdAt,
+  author -> {
+    _id, name, image, bio
+  }, 
+  views,
+  description,
+  category,
+  image,
+}`);
+
 export const PLAYLIST_BY_SLUG_QUERY =
   defineQuery(`*[_type == "playlist" && slug.current == $slug][0]{
   _id,
