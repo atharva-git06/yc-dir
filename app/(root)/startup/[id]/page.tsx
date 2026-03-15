@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Suspense } from 'react';
 import View from '../../../../components/View';
 import StartupCard, { StartupTypeCard } from '@/components/StartupCard';
+import StartupImage from '@/components/StartupImage';
 
 const md = markdownit();
 
@@ -36,10 +37,10 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
       </section>
 
       <section className="section_container">
-        <img
+        <StartupImage
           src={post.image}
-          alt="thumbnail"
-          className="w-full h-auto rounded-xl"
+          alt={post.title ?? 'Startup'}
+          className="w-full h-auto min-h-[200px] rounded-xl object-cover"
         />
 
         <div className="space-y-5 mt-10 max-w-4xl mx-auto">

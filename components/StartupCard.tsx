@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Author, Startup } from "@/sanity/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import StartupImage from "@/components/StartupImage";
 
 export type StartupTypeCard = Omit<Startup, "author"> & { author?: Author };
 
@@ -19,8 +20,6 @@ const StartupCard = ({ post }: { post: StartupTypeCard }) => {
     image,
     description,
   } = post;
-
-  console.log(`this is from card: ${post.image}`)
 
   return (
     <li className="startup-card group">
@@ -55,7 +54,7 @@ const StartupCard = ({ post }: { post: StartupTypeCard }) => {
       <Link href={`/startup/${_id}`}>
         <p className="startup-card_desc">{description}</p>
 
-        <img src={image} alt="placeholder" className="startup-card_img" />
+        <StartupImage src={image} alt={title ?? "Startup"} className="startup-card_img" />
       </Link>
 
       <div className="flex-between gap-3 mt-5">
