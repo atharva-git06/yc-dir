@@ -1,5 +1,5 @@
-import { formatDate } from '@/lib/utils';
 import { client } from '@/sanity/lib/client';
+import FormattedDate from '@/components/FormattedDate';
 import { PLAYLIST_BY_SLUG_QUERY, STARTUP_BY_ID_QUERY, } from '@/sanity/lib/queries';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -31,7 +31,7 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
   return (
     <>
       <section className="pink_container min-h-[230px]">
-        <p className="tag">{formatDate(post?._createdAt)}</p>
+        <p className="tag"><FormattedDate date={post?._createdAt ?? ''} /></p>
         <h1 className="heading">{post.title}</h1>
         <p className="sub-heading max-w-5xl">{post.description}</p>
       </section>
