@@ -30,7 +30,7 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.552.0",
     "markdown-it": "^14.1.0",
-    "next": "^16.0.1",
+    "next": "16.0.10",
     "next-auth": "^5.0.0-beta.30",
     "next-sanity": "^11.7.0-canary.3",
     "react": "19.1.0",
