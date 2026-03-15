@@ -9,12 +9,19 @@ import { StartupCardSkeleton } from "@/components/StartupCard";
 
 export const dynamic = "force-dynamic";
 
-const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
-  const id = (await params).id;
-  const session = await auth();
+const Page = async ({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ debug?: string }>
+}) => {
+  const id = (await params).id
+  const { debug: debugParam } = await searchParams
+  const session = await auth()
 
-  const user = await clientFresh.fetch(AUTHOR_BY_ID_QUERY, { id });
-  if (!user) return notFound();
+  const user = await clientFresh.fetch(AUTHOR_BY_ID_QUERY, { id })
+  if (!user) return notFound()
 
   return (
     <>
@@ -46,13 +53,17 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
           </p>
           <ul className="card_grid-sm">
             <Suspense fallback={<StartupCardSkeleton />}>
-              <UserStartups id={id} githubId={user.id} />
+              <UserStartups
+                id={id}
+                githubId={user.id}
+                debug={debugParam === "1"}
+              />
             </Suspense>
           </ul>
         </div>
       </section>
     </>
-  );
-};
+  )
+}
 
 export default Page;
