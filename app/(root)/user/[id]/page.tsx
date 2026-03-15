@@ -48,13 +48,6 @@ const Page = async ({
         </div>
 
         <div className="flex-1 flex flex-col gap-5 lg:-mt-5">
-          <div className="p-4 mb-4 rounded bg-amber-200 border-2 border-amber-500 text-sm font-mono">
-            <p className="font-bold mb-2">[Live Debug - remove after fixing] build: profile-with-startups-v2</p>
-            <p>projectId: {process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ?? "(missing)"}</p>
-            <p>dataset: {process.env.NEXT_PUBLIC_SANITY_DATASET ?? "(missing)"}</p>
-            <p>author id: {id}</p>
-            <p>githubId: {String(user?.id ?? "(missing)")}</p>
-          </div>
           <p className="text-30-bold">
             {session?.id === id ? "Your" : "All"} Startups
           </p>
