@@ -4,7 +4,6 @@ import {
   STARTUPS_BY_AUTHOR_QUERY,
   STARTUPS_BY_AUTHOR_GITHUB_ID_QUERY,
 } from '@/sanity/lib/queries'
-import { dataset, projectId } from '@/sanity/env'
 import React from 'react'
 import StartupCard, { StartupTypeCard } from './StartupCard'
 
@@ -20,7 +19,17 @@ const UserStartups = async ({
   noStore()
 
   if (!id && !githubId) {
-    return <p className="no-result">No posts yet</p>
+    return (
+      <>
+        {debug && (
+          <li className="col-span-full p-4 mb-4 rounded bg-gray-100 text-sm font-mono">
+            <p className="font-bold mb-2">[Debug] Your Startups</p>
+            <p>early return: no id and no githubId</p>
+          </li>
+        )}
+        <p className="no-result">No posts yet</p>
+      </>
+    )
   }
 
   let list: StartupTypeCard[] = []
@@ -60,8 +69,8 @@ const UserStartups = async ({
       {debug && (
         <li className="col-span-full p-4 mb-4 rounded bg-gray-100 text-sm font-mono">
           <p className="font-bold mb-2">[Debug] Your Startups</p>
-          <p>projectId: {projectId}</p>
-          <p>dataset: {dataset}</p>
+          <p>projectId: {process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ?? "(missing)"}</p>
+          <p>dataset: {process.env.NEXT_PUBLIC_SANITY_DATASET ?? "(missing)"}</p>
           <p>author id (from URL): {id}</p>
           <p>author githubId: {String(githubId)}</p>
           <p>by author._ref: {byRefList.length} startups</p>
