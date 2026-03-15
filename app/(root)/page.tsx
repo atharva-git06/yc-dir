@@ -10,7 +10,10 @@ export default async function Home({searchParams} : {
   
 }) {
   const query = (await searchParams).query;
-  const params = {search: query || null};
+  const searchTerm = query?.trim();
+  const params = {
+    search: searchTerm ? `${searchTerm}*` : null,
+  };
   const session = await auth();
   console.log(` this is session id: ${session?.id}`);
 
