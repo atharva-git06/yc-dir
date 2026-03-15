@@ -6,18 +6,46 @@ import { parseServerActionResponse } from "./utils";
 import slugify from 'slugify'
 import { writeClient } from "@/sanity/lib/write-client";
 
-export const createPitch = async (state: any, form:FormData, pitch:string) => {
-const session = await auth();
-if(!session) return parseServerActionResponse({error: 'Not Signed in', status: 'ERROR'});
-const {title,description,category,link} = Object.fromEntries(
-    Array.from(form).filter(([key])=> key != 'pitch'),
-);
+async function getImageUrl(form: FormData): Promise<{ url: string } | { error: string }> {
+  const file = form.get("imageFile") as File | null
+  const link = (form.get("link") as string)?.trim()
 
-const slug = slugify(title as string, {lower:true, strict:true})
+  if (file && file.size > 0) {
+    try {
+      const buffer = Buffer.from(await file.arrayBuffer())
+      const asset = await writeClient.assets.upload("image", buffer, {
+        filename: file.name || "image",
+      })
+      return { url: asset.url ?? asset.href ?? "" }
+    } catch (e) {
+      console.error(e)
+      return { error: "Image upload failed. Try using an image URL instead." }
+    }
+  }
 
-try {
+  if (link) return { url: link }
+  return { error: "Please provide an image URL or upload an image." }
+}
+
+export const createPitch = async (state: any, form: FormData, pitch: string) => {
+  const session = await auth()
+  if (!session) return parseServerActionResponse({ error: "Not Signed in", status: "ERROR" })
+
+  const imageResult = await getImageUrl(form)
+  if ("error" in imageResult) {
+    return parseServerActionResponse({ error: imageResult.error, status: "ERROR" })
+  }
+  const imageUrl = imageResult.url
+
+  const { title, description, category } = Object.fromEntries(
+    Array.from(form).filter(([key]) => key !== "pitch" && key !== "imageFile"),
+  )
+
+  const slug = slugify(title as string, { lower: true, strict: true })
+
+  try {
     const startup = {
-        title,description,category,image:link,slug:{
+        title,description,category,image: imageUrl,slug:{
             _type: slug,
             current: slug,
         },
@@ -28,7 +56,7 @@ try {
         pitch
     }
 
-    const result = await writeClient.create({_type:"startup",...startup});
+    const result = await writeClient.create({ _type: "startup", ...startup })
     // Invalidate homepage and current user's profile so new startup appears
     revalidatePath("/");
     if (session?.id) revalidatePath(`/user/${session.id}`);

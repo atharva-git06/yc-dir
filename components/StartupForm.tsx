@@ -19,18 +19,28 @@ const StartupForm = () => {
   const {toast} = useToast();
   const router = useRouter()
 
-  const handleFormSubmit = async (prevState:any,formData: FormData) => {
+  const handleFormSubmit = async (prevState: any, formData: FormData) => {
     try {
+        const file = formData.get("imageFile") as File | null
+        const linkValue = (formData.get("link") as string)?.trim() ?? ""
+        const hasFile = file && file.size > 0
+        const hasLink = linkValue.length > 0
+
+        if (!hasFile && !hasLink) {
+            setErrors({ link: "Provide an image URL or upload an image" })
+            toast({ title: "Error", description: "Add an image URL or upload an image", variant: "destructive" })
+            return { ...prevState, error: "Image required", status: "ERROR" }
+        }
+
         const formValues = {
             title: formData.get("title") as string,
             description: formData.get("description") as string,
             category: formData.get("category") as string,
-            link: formData.get("link") as string,
+            link: hasLink ? linkValue : "",
             pitch,
-
         }
-        await formSchema.parseAsync(formValues);
-        const result = await createPitch(prevState,formData,pitch);
+        await formSchema.parseAsync(formValues)
+        const result = await createPitch(prevState, formData, pitch)
         if(result.status === "SUCCESS"){
             toast({
                 title: 'Success',
@@ -97,9 +107,21 @@ const StartupForm = () => {
         </div>
         <div>
             <label htmlFor="link" className='startup-form_label'>
-                      Image URL
+                      Image (URL or upload)
             </label>
-            <Input id='link' name='link' className='startup-form_input' required placeholder='Startup Image URL' />
+            <Input
+              id='link'
+              name='link'
+              className='startup-form_input'
+              placeholder='Paste image URL (e.g. https://...)'
+            />
+            <p className='text-14-normal text-black-300 mt-1 mb-2'>Or upload from your device:</p>
+            <input
+              type='file'
+              name='imageFile'
+              accept='image/*'
+              className='block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-medium file:bg-primary file:text-white hover:file:bg-primary/90'
+            />
             {errors.link && <p className='startup-form_error'>{errors.link} </p>}
         </div>
         <div data-color-mode="light">
