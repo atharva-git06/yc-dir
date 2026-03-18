@@ -10,14 +10,17 @@ import { Suspense } from 'react';
 import View from '../../../../components/View';
 import StartupCard, { StartupTypeCard } from '@/components/StartupCard';
 import StartupImage from '@/components/StartupImage';
+import LikeButton from '@/components/LikeButton';
+import { auth } from '@/auth';
 
 const md = markdownit();
 
 const page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const id = (await params).id;
+  const session = await auth();
 
   const [post, editorPicksData] = await Promise.all([
-    client.fetch(STARTUP_BY_ID_QUERY, { id }),
+    client.fetch(STARTUP_BY_ID_QUERY, { id, userId: session?.id ?? null }),
     client.fetch(PLAYLIST_BY_SLUG_QUERY, { slug: 'editor-picks' })
   ])
 
@@ -92,9 +95,16 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
           </div>
         )}
 
-        <Suspense fallback={<Skeleton className='view-skeleton' />}>
-          <View id={id} authorId={post.author?._id} />
-        </Suspense>
+        <div className="flex items-center justify-end gap-3 mt-6">
+          <LikeButton
+            startupId={id}
+            initialLiked={post?.likedByMe}
+            initialCount={post?.likeCount}
+          />
+          <Suspense fallback={<Skeleton className='view-skeleton' />}>
+            <View id={id} authorId={post.author?._id} />
+          </Suspense>
+        </div>
       </section>
     </>
   );

@@ -39,6 +39,14 @@ export const startup = defineType({
         ),
         defineField(
             {
+                name: "likes",
+                type: "array",
+                of: [{ type: "reference", to: [{ type: "author" }] }],
+                initialValue: [],
+            }
+        ),
+        defineField(
+            {
                 name: "description",
                 type: "text"
             }

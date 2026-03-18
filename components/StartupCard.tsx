@@ -7,8 +7,13 @@ import { Author, Startup } from "@/sanity/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import StartupImage from "@/components/StartupImage";
 import FormattedDate from "@/components/FormattedDate";
+import LikeButton from "@/components/LikeButton";
 
-export type StartupTypeCard = Omit<Startup, "author"> & { author?: Author };
+export type StartupTypeCard = Omit<Startup, "author"> & {
+  author?: Author;
+  likeCount?: number;
+  likedByMe?: boolean;
+};
 
 const StartupCard = ({ post }: { post: StartupTypeCard }) => {
   const {
@@ -20,15 +25,24 @@ const StartupCard = ({ post }: { post: StartupTypeCard }) => {
     _id,
     image,
     description,
+    likeCount,
+    likedByMe,
   } = post;
 
   return (
     <li className="startup-card group">
       <div className="flex-between">
         <p className="startup_card_date"><FormattedDate date={_createdAt} /></p>
-        <div className="flex gap-1.5">
-          <EyeIcon className="size-6 text-primary" />
-          <span className="text-16-medium">{views}</span>
+        <div className="flex items-center gap-3">
+          <div className="flex gap-1.5">
+            <EyeIcon className="size-6 text-primary" />
+            <span className="text-16-medium">{views}</span>
+          </div>
+          <LikeButton
+            startupId={_id}
+            initialLiked={likedByMe}
+            initialCount={likeCount}
+          />
         </div>
       </div>
 

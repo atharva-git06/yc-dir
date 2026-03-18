@@ -10,10 +10,12 @@ import StartupCard, { StartupTypeCard } from './StartupCard'
 const UserStartups = async ({
   id,
   githubId,
+  viewerId,
   debug = false,
 }: {
   id: string
   githubId?: string | null
+  viewerId?: string | null
   debug?: boolean
 }) => {
   noStore()
@@ -38,12 +40,13 @@ const UserStartups = async ({
   let errorMsg: string | null = null
   try {
     const byRef = id
-      ? await clientFresh.fetch(STARTUPS_BY_AUTHOR_QUERY, { id })
+      ? await clientFresh.fetch(STARTUPS_BY_AUTHOR_QUERY, { id, userId: viewerId ?? null })
       : []
     const byGitHubId =
       githubId != null && githubId !== ''
         ? await clientFresh.fetch(STARTUPS_BY_AUTHOR_GITHUB_ID_QUERY, {
             githubId: Number(githubId) || githubId,
+            userId: viewerId ?? null,
           })
         : []
     byRefList = Array.isArray(byRef) ? byRef : []

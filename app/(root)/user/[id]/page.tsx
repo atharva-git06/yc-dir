@@ -56,6 +56,7 @@ const Page = async ({
               <UserStartups
                 id={id}
                 githubId={user.id}
+                viewerId={session?.id ?? null}
                 debug={debugParam === "1"}
               />
             </Suspense>

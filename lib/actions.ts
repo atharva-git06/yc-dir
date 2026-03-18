@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache"
 import { parseServerActionResponse } from "./utils";
 import slugify from 'slugify'
 import { writeClient } from "@/sanity/lib/write-client";
+import { clientFresh } from "@/sanity/lib/client";
 
 async function getImageUrl(form: FormData): Promise<{ url: string } | { error: string }> {
   const file = form.get("imageFile") as File | null
@@ -53,6 +54,8 @@ export const createPitch = async (state: any, form: FormData, pitch: string) => 
             _type: 'reference',
             _ref: session?.id
         },
+        views: 0,
+        likes: [],
         pitch
     }
 
@@ -96,4 +99,61 @@ export const createPitch = async (state: any, form: FormData, pitch: string) => 
 
 }
 
+export const toggleLike = async (startupId: string) => {
+  const session = await auth()
+  if (!session?.id) {
+    return parseServerActionResponse({ error: "Not Signed in", status: "ERROR" })
+  }
+
+  const userId = session.id
+
+  const current = await clientFresh
+    .withConfig({ useCdn: false })
+    .fetch(
+      `*[_type == "startup" && _id == $id][0]{ "liked": $userId in likes[]._ref, "likeCount": count(likes) }`,
+      { id: startupId, userId }
+    )
+
+  const liked = Boolean(current?.liked)
+
+  let patch = writeClient.patch(startupId).setIfMissing({ likes: [] })
+  if (liked) {
+    patch = patch.unset([`likes[_ref=="${userId}"]`])
+  } else {
+    patch = patch.insert("after", "likes[-1]", [{ _type: "reference", _ref: userId }])
+  }
+  await patch.commit({ autoGenerateArrayKeys: true })
+
+  const updated = await clientFresh
+    .withConfig({ useCdn: false })
+    .fetch(
+      `*[_type == "startup" && _id == $id][0]{ "liked": $userId in likes[]._ref, "likeCount": count(likes) }`,
+      { id: startupId, userId }
+    )
+
+  // Revalidate pages that show like counts
+  revalidatePath("/")
+  revalidatePath(`/startup/${startupId}`)
+
+  const secret = process.env.REVALIDATION_SECRET
+  const origin = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : process.env.REVALIDATE_ORIGIN
+  if (secret && origin) {
+    try {
+      await fetch(
+        `${origin}/api/revalidate?secret=${encodeURIComponent(secret)}&path=/`
+      )
+      await fetch(
+        `${origin}/api/revalidate?secret=${encodeURIComponent(secret)}&path=${encodeURIComponent(`/startup/${startupId}`)}`
+      )
+    } catch {
+      // ignore
+    }
+  }
+
+  return parseServerActionResponse({
+    status: "SUCCESS",
+    liked: Boolean(updated?.liked),
+    likeCount: Number(updated?.likeCount ?? 0),
+  })
+}
 

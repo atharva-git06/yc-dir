@@ -11,11 +11,11 @@ export default async function Home({searchParams} : {
 }) {
   const query = (await searchParams).query;
   const searchTerm = query?.trim();
+  const session = await auth();
   const params = {
     search: searchTerm ? `${searchTerm}*` : null,
+    userId: session?.id ?? null,
   };
-  const session = await auth();
-  console.log(` this is session id: ${session?.id}`);
 
 
   // useCdn: false so when page re-renders after revalidatePath (new startup created), we get fresh list from API
