@@ -7,10 +7,9 @@ import Image from 'next/image';
 import markdownit from 'markdown-it'
 import { Skeleton } from '@/components/ui/skeleton';
 import { Suspense } from 'react';
-import View from '../../../../components/View';
 import StartupCard, { StartupTypeCard } from '@/components/StartupCard';
 import StartupImage from '@/components/StartupImage';
-import LikeButton from '@/components/LikeButton';
+import Engagement from '@/components/Engagement';
 import { auth } from '@/auth';
 
 const md = markdownit();
@@ -96,13 +95,15 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
         )}
 
         <div className="flex items-center justify-end gap-3 mt-6">
-          <LikeButton
-            startupId={id}
-            initialLiked={post?.likedByMe}
-            initialCount={post?.likeCount}
-          />
           <Suspense fallback={<Skeleton className='view-skeleton' />}>
-            <View id={id} authorId={post.author?._id} />
+            <Engagement
+              startupId={id}
+              authorId={post.author?._id}
+              initialViews={post?.views ?? 0}
+              initialLikeCount={post?.likeCount ?? 0}
+              initialLiked={post?.likedByMe ?? false}
+              incrementOnMount={true}
+            />
           </Suspense>
         </div>
       </section>

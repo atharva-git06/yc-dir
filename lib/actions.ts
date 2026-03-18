@@ -157,3 +157,52 @@ export const toggleLike = async (startupId: string) => {
   })
 }
 
+export const getEngagement = async (startupId: string) => {
+  const session = await auth()
+  const userId = session?.id ?? null
+  const data = await clientFresh
+    .withConfig({ useCdn: false })
+    .fetch(
+      `*[_type == "startup" && _id == $id][0]{
+        "views": coalesce(views, 0),
+        "likeCount": count(likes),
+        "likedByMe": defined($userId) && $userId in likes[]._ref
+      }`,
+      { id: startupId, userId }
+    )
+  return parseServerActionResponse({
+    status: "SUCCESS",
+    views: Number(data?.views ?? 0),
+    likeCount: Number(data?.likeCount ?? 0),
+    likedByMe: Boolean(data?.likedByMe),
+  })
+}
+
+export const incrementView = async (startupId: string, authorId?: string | null) => {
+  const session = await auth()
+  const isAuthor = authorId != null && session?.id === authorId
+  if (isAuthor) return parseServerActionResponse({ status: "SKIPPED" })
+
+  const current = await clientFresh
+    .withConfig({ useCdn: false })
+    .fetch(`*[_type == "startup" && _id == $id][0]{ "views": coalesce(views, 0) }`, { id: startupId })
+
+  await writeClient.patch(startupId).set({ views: Number(current?.views ?? 0) + 1 }).commit()
+
+  // Revalidate pages that show view counts
+  revalidatePath("/")
+  revalidatePath(`/startup/${startupId}`)
+
+  const secret = process.env.REVALIDATION_SECRET
+  const origin = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : process.env.REVALIDATE_ORIGIN
+  if (secret && origin) {
+    try {
+      await fetch(`${origin}/api/revalidate?secret=${encodeURIComponent(secret)}&path=/`)
+      await fetch(`${origin}/api/revalidate?secret=${encodeURIComponent(secret)}&path=${encodeURIComponent(`/startup/${startupId}`)}`)
+    } catch {
+      // ignore
+    }
+  }
+
+  return parseServerActionResponse({ status: "SUCCESS" })
+}
