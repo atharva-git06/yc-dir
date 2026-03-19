@@ -43,7 +43,7 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
           <StartupImage
             src={post.image}
             alt={post.title ?? 'Startup'}
-            className="w-full h-[260px] md:h-[320px] object-cover rounded-xl"
+            className="w-full max-h-[320px] object-contain rounded-xl"
           />
         </div>
 
