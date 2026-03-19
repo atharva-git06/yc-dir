@@ -22,6 +22,9 @@ const Navbar = async () => {
         <div className="flex items-center gap-5 text-black">
           {session && session?.user ? (
             <>
+              <Link href="/top">
+                <span className="max-sm:hidden">Top Startups</span>
+              </Link>
               <Link href="/startup/create">
                 <span className="max-sm:hidden">Create</span>
                 <BadgePlus className="size-6 sm:hidden" />
