@@ -39,11 +39,13 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
       </section>
 
       <section className="section_container">
-        <StartupImage
-          src={post.image}
-          alt={post.title ?? 'Startup'}
-          className="w-full h-auto min-h-[200px] rounded-xl object-cover"
-        />
+        <div className="max-w-3xl mx-auto w-full rounded-2xl bg-[#f6f6f8] p-4 shadow-sm">
+          <StartupImage
+            src={post.image}
+            alt={post.title ?? 'Startup'}
+            className="w-full h-[260px] md:h-[320px] object-cover rounded-xl"
+          />
+        </div>
 
         <div className="space-y-5 mt-10 max-w-4xl mx-auto">
           <div className="flex-between gap-5">
