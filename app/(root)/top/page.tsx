@@ -10,27 +10,24 @@ export default async function TopStartupsPage() {
   });
 
   return (
-    <>
-      <section className="pink_container">
-        <h1 className="heading">Top Startups</h1>
-        <p className="sub-heading !max-w-3xl">
-          Startups with the most views in the directory.
+    <section className="section_container">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-30-bold">Top Startups</h1>
+        <p className="text-16-medium text-black-300">
+          Ranked by views, then recent activity.
         </p>
-      </section>
+      </div>
 
-      <section className="section_container">
-        <p className="text-30-semibold">Top Startups</p>
-        <ul className="mt-7 card_grid">
-          {posts.length > 0 ? (
-            posts.map((post: StartupTypeCard) => (
-              <StartupCard key={post._id} post={post} />
-            ))
-          ) : (
-            <p className="no-results">No startups yet</p>
-          )}
-        </ul>
-      </section>
-    </>
+      <ul className="mt-2 card_grid">
+        {posts.length > 0 ? (
+          posts.map((post: StartupTypeCard) => (
+            <StartupCard key={post._id} post={post} />
+          ))
+        ) : (
+          <p className="no-results">No startups yet</p>
+        )}
+      </ul>
+    </section>
   );
 }
 
