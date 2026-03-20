@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { auth, signOut, signIn } from "@/auth";
-import { BadgePlus, LogOut } from "lucide-react";
+import { BadgePlus, LogOut, Trophy } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import * as Sentry from "@sentry/nextjs";
 import { Button } from "./ui/button";
@@ -24,6 +24,7 @@ const Navbar = async () => {
             <>
               <Link href="/top">
                 <span className="max-sm:hidden">Top Startups</span>
+                <Trophy className="size-6 sm:hidden" />
               </Link>
               <Link href="/startup/create">
                 <span className="max-sm:hidden">Create</span>
