@@ -14,7 +14,7 @@ export default async function TopStartupsPage() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-30-bold">Top Startups</h1>
         <p className="text-16-medium text-black-300">
-          Ranked by views, then recent activity.
+          Showing the startup with the highest views.
         </p>
       </div>
 

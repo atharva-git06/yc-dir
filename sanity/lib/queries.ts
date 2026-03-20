@@ -18,7 +18,7 @@ export const STARTUPS_QUERY =
 }`);
 
 export const TOP_STARTUPS_QUERY =
-  defineQuery(`*[_type == "startup" && defined(slug.current)] | order(views desc, _createdAt desc)[0...8]{
+  defineQuery(`*[_type == "startup" && defined(slug.current)] | order(views desc, _createdAt desc)[0...1]{
   _id,
   title,
   slug,
