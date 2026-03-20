@@ -22,7 +22,7 @@ type JarvisResponse = {
 };
 
 const JARVIS_GREETING =
-  "hi i am jarvis i am still in training period but you can try the limited abilities i have now.";
+  "hi i am jarvis i am still in training period but you can try the\nlimited abilities i have now.";
 
 function uid() {
   return Math.random().toString(16).slice(2) + Date.now().toString(16);

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import localFont from "next/font/local";
 import 'easymde/dist/easymde.min.css'
@@ -51,7 +50,7 @@ const workSans = localFont({
   variable: '--font-work-sans'
 })
 export const metadata: Metadata = {
-  title: "YC Directory",
+  title: "StartupDeck",
   description: "Pitch, Vote and Grow",
 };
 
