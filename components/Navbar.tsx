@@ -1,10 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import { auth, signOut, signIn } from "@/auth";
 import { BadgePlus, LogOut, Trophy } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import * as Sentry from "@sentry/nextjs";
-import { Button } from "./ui/button";
 
 const Navbar = async () => {
   const session = await auth();
@@ -16,7 +13,7 @@ const Navbar = async () => {
       <nav className="flex justify-between items-center">
       
         <Link href="/">
-          <Image src="/logo.png" alt="logo" width={144} height={30} />
+          <span className="font-bold text-20-medium leading-none">StartupDeck</span>
         </Link>
 
         <div className="flex items-center gap-5 text-black">
