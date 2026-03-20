@@ -34,6 +34,36 @@ export const TOP_STARTUPS_QUERY =
   image,
 }`);
 
+export const SIMILAR_STARTUPS_QUERY = defineQuery(`
+  *[
+    _type == "startup" &&
+    defined(slug.current) &&
+    (
+      title match $search ||
+      description match $search ||
+      category match $search ||
+      author->name match $search
+    )
+  ] | order(views desc, _createdAt desc)[0...30]{
+    _id,
+    title,
+    slug,
+    _createdAt,
+    author -> {
+      _id,
+      name,
+      image,
+      bio
+    },
+    views,
+    "likeCount": count(likes),
+    "likedByMe": defined($userId) && $userId in likes[]._ref,
+    description,
+    category,
+    image
+  }
+`);
+
 export const STARTUP_BY_ID_QUERY =
   defineQuery(`*[_type == "startup" && _id == $id][0]{
   _id, 

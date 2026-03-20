@@ -28,7 +28,11 @@ async function getImageUrl(form: FormData): Promise<{ url: string } | { error: s
   return { error: "Please provide an image URL or upload an image." }
 }
 
-export const createPitch = async (state: any, form: FormData, pitch: string) => {
+export const createPitch = async (
+  state: Record<string, unknown>,
+  form: FormData,
+  pitch: string
+) => {
   const session = await auth()
   if (!session) return parseServerActionResponse({ error: "Not Signed in", status: "ERROR" })
 

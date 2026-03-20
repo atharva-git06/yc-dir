@@ -45,6 +45,13 @@ export type Startup = {
     [internalGroqTypeReferenceTo]?: "author";
   };
   views?: number;
+  likes?: Array<{
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    _key: string;
+    [internalGroqTypeReferenceTo]?: "author";
+  }>;
   description?: string;
   category?: string;
   image?: string;

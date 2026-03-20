@@ -19,6 +19,23 @@ export default function Engagement({
   initialLiked?: boolean
   incrementOnMount?: boolean
 }) {
+  type GetEngagementResponse = {
+    status?: string
+    views?: number
+    likeCount?: number
+    likedByMe?: boolean
+  }
+
+  type IncrementViewResponse = {
+    status?: string
+  }
+
+  type ToggleLikeResponse = {
+    status?: string
+    liked?: boolean
+    likeCount?: number
+  }
+
   const [views, setViews] = useState<number>(Number(initialViews ?? 0))
   const [likeCount, setLikeCount] = useState<number>(Number(initialLikeCount ?? 0))
   const [liked, setLiked] = useState<boolean>(Boolean(initialLiked))
@@ -26,11 +43,11 @@ export default function Engagement({
   const mounted = useRef(false)
 
   useEffect(() => {
-    let interval: any
+    let interval: ReturnType<typeof setInterval> | undefined
 
     const refresh = async () => {
-      const res: any = await getEngagement(startupId)
-      if (res?.status === 'SUCCESS') {
+      const res = (await getEngagement(startupId)) as GetEngagementResponse
+      if (res?.status === "SUCCESS") {
         setViews(Number(res.views ?? 0))
         setLikeCount(Number(res.likeCount ?? 0))
         setLiked(Boolean(res.likedByMe))
@@ -41,7 +58,16 @@ export default function Engagement({
       if (!mounted.current) {
         mounted.current = true
         if (incrementOnMount) {
-          await incrementView(startupId, authorId ?? null)
+          // Deduplicate views per browser so repeated visits don't inflate `views`.
+          // This is per-user in practice (browser identity), and avoids server cookie edge-cases.
+          const key = `viewed_v2_${startupId}`
+          const alreadyViewed = window.localStorage.getItem(key) === "1"
+          if (!alreadyViewed) {
+            const incRes = (await incrementView(startupId, authorId ?? null)) as IncrementViewResponse
+            if (incRes?.status === "SUCCESS") {
+              window.localStorage.setItem(key, "1")
+            }
+          }
         }
         await refresh()
       }
@@ -61,7 +87,7 @@ export default function Engagement({
       setLiked(nextLiked)
       setLikeCount(prevCount + (nextLiked ? 1 : -1))
 
-      const res: any = await toggleLike(startupId)
+      const res = (await toggleLike(startupId)) as ToggleLikeResponse
       if (res?.status !== 'SUCCESS') {
         setLiked(prevLiked)
         setLikeCount(prevCount)
